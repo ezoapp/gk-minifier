@@ -1,0 +1,14 @@
+{
+  "name": "gk-minifier",
+  "version": "0.0.2",
+  "dependencies": {
+    "underscore": "*",
+    "requirejs": "*",
+    "uglify-js": "*",
+    "cheerio": "*",
+    "glob": "*",
+    "wrench": "*",
+    "csso": "*",
+    "gk-loader": "*"
+  }
+}

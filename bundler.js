@@ -136,13 +136,13 @@
             findNestedDependencies: true,
             optimizeCss: 'node',
             nodeRequire: require,
-            include: loadComponents.paths,
+            include: [pluginBase + '/require-text/text'].concat(loadComponents.paths),
             map: {
               '*': {
                 '@css': pluginBase + '/require-css/css',
                 '@text': pluginBase + '/require-text/text',
-                '@html': pluginBase + '/gk-loader/element/loader',
-                '@wdgt': pluginBase + '/gk-loader/widget/loader'
+                '@html': pluginBase + '/gk-loader/html',
+                '@wdgt': pluginBase + '/gk-loader/wdgt'
               }
             },
             out: path.resolve(currloc + '/' + new Date().getTime() + '.js'),

@@ -2,6 +2,8 @@
 
   'use strict';
 
+  var runMode = '.min';
+
   function eachExec(arr, func, cb) {
     var i = 0,
       l = arr.length,
@@ -136,13 +138,13 @@
             findNestedDependencies: true,
             optimizeCss: 'node',
             nodeRequire: require,
-            include: [pluginBase + '/require-text/text'].concat(loadComponents.paths),
+            include: [pluginBase + '/require-text/text' + runMode].concat(loadComponents.paths),
             map: {
               '*': {
-                '@css': pluginBase + '/require-css/css',
-                '@text': pluginBase + '/require-text/text',
-                '@html': pluginBase + '/gk-loader/html',
-                '@wdgt': pluginBase + '/gk-loader/wdgt'
+                '@css': pluginBase + '/require-css/css' + runMode,
+                '@text': pluginBase + '/require-text/text' + runMode,
+                '@html': pluginBase + '/gk-loader/html' + runMode,
+                '@wdgt': pluginBase + '/gk-loader/wdgt' + runMode
               }
             },
             out: path.resolve(currloc + '/' + new Date().getTime() + '.js'),
@@ -215,7 +217,7 @@
   }
 
   function getLoaderScriptContent() {
-    return fs.readFileSync(__dirname + '/' + gkLoaderDir + '/gk-loader.js') + '';
+    return fs.readFileSync(__dirname + '/' + gkLoaderDir + '/gk-loader' + runMode + '.js') + '';
   }
 
   function overwriteMethod(ctx) {

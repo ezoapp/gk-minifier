@@ -198,15 +198,16 @@
       paths = [],
       loadComponents = [],
       loadGkTags = [],
-      baseUrl = absolute(param.baseUrl || '', html + '/../');
+      currDir = html + '/../',
+      baseUrl = absolute(param.baseUrl || '', currDir);
     _.each(param.components, function (c) {
       c = absolute(trimExt(c, 'html'), baseUrl);
-      loadComponents.push(c);
+      loadComponents.push(path.relative(currDir, c));
       paths.push('@html!' + c);
     });
     _.each(param.gkTags, function (t) {
       t = absolute(trimExt(t, 'js'), baseUrl);
-      loadGkTags.push(t);
+      loadGkTags.push(path.relative(currDir, t));
       paths.push(t);
     });
     return {

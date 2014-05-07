@@ -131,6 +131,7 @@
       if (src.match(/\/gk-loader.*\.js$/)) {
         var loadComponents = getLoadComponents(html, $ele[0].attribs),
           pluginBase = normalize(html + '/../' + src + '/../../'),
+          htmlPlugin = (config.ie8 ? 'html-ie8' : 'html') + runMode,
           info = _.extend({
             baseUrl: config.documentRoot,
             optimize: 'uglify2',
@@ -138,12 +139,12 @@
             findNestedDependencies: true,
             optimizeCss: 'node',
             nodeRequire: require,
-            include: [pluginBase + '/require-text/text' + runMode].concat(loadComponents.paths),
+            include: [pluginBase + '/require-text/text' + runMode, pluginBase + '/gk-loader/' + htmlPlugin].concat(loadComponents.paths),
             map: {
               '*': {
                 '@css': pluginBase + '/require-css/css' + runMode,
                 '@text': pluginBase + '/require-text/text' + runMode,
-                '@html': pluginBase + '/gk-loader/html' + runMode,
+                '@html': pluginBase + '/gk-loader/' + htmlPlugin,
                 '@wdgt': pluginBase + '/gk-loader/wdgt' + runMode
               }
             },

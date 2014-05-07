@@ -23,7 +23,8 @@ var config = {
       "deps": ["p/gk-demo/components/flot/flot/excanvas"]
     }
   },
-  documentRoot: '/Users/mingzeke/Documents/'
+  documentRoot: '/Users/mingzeke/Documents/',
+  ie8: true
 },
   htmls = ['p/gk-demo/components/flot/demo/flot_pie.html'];
 

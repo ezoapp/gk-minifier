@@ -1,4 +1,4 @@
-+(function () {
++(function (require, module) {
 
   'use strict';
 
@@ -26,6 +26,7 @@
     fs = require('fs'),
     gkLoaderDir = './node_modules/gk-loader',
     utils = require(gkLoaderDir + '/lib/utils'),
+    loadFile = utils.loadFile,
     normalize = utils.normalize,
     absolute = utils.absolute,
     trimExt = utils.trimExt,
@@ -37,8 +38,8 @@
   function bundle(html, masterConfig, cb) {
     var sections = [],
       writeSections = [],
-      htmlPath = path.resolve(masterConfig.documentRoot + '/' + html),
-      htmlContent = fs.readFileSync(htmlPath) + '',
+      htmlPath = path.resolve(masterConfig.documentRoot, html),
+      htmlContent = loadFile(htmlPath),
       tmp;
     _.extend(config, masterConfig);
     console.log('[html] ' + htmlPath);
@@ -88,7 +89,7 @@
   }
 
   function getReplaceText(html, tagName, param, code) {
-    var currloc = normalize(config.documentRoot + '/' + html + '/../'),
+    var htmlDir = path.resolve(config.documentRoot, html, '..'),
       ver = param.version || new Date().toISOString().replace(/[T\-:]/g, '').substr(0, 12),
       makeAttributes = function (attrMap) {
         return _.map(attrMap, function (val, key) {
@@ -97,13 +98,13 @@
       };
     switch (tagName) {
     case 'script':
-      fs.writeFileSync(path.resolve(currloc + '/' + param.src), code);
+      fs.writeFileSync(path.resolve(htmlDir, param.src), code);
       param.src = param.src + '?v=' + ver;
       delete param.version;
       return '<script' + makeAttributes(param) + '></script>';
     case 'link':
       param.rel = 'stylesheet';
-      fs.writeFileSync(path.resolve(currloc + '/' + param.href), code);
+      fs.writeFileSync(path.resolve(htmlDir, param.href), code);
       param.href = param.href + '?v=' + ver;
       delete param.version;
       return '<link' + makeAttributes(param) + '>';
@@ -113,8 +114,8 @@
   }
 
   function replaceHTML(html, writeSections, cb) {
-    var htmlPath = config.documentRoot + '/' + html,
-      htmlContent = fs.readFileSync(path.resolve(htmlPath)) + '',
+    var htmlPath = path.resolve(config.documentRoot, html),
+      htmlContent = loadFile(htmlPath),
       count = 0,
       tmp;
     while (tmp = secRegex.exec(htmlContent)) {
@@ -125,7 +126,7 @@
   }
 
   bundlers.script = function (html, $ele, param, cb) {
-    var currloc = normalize(config.documentRoot + '/' + html + '/../'),
+    var htmlDir = path.resolve(config.documentRoot, html, '..'),
       src = $ele.attr('src');
     if (src) {
       if (src.match(/\/gk-loader.*\.js$/)) {
@@ -148,7 +149,7 @@
                 '@wdgt': pluginBase + '/gk-loader/wdgt' + runMode
               }
             },
-            out: path.resolve(currloc + '/' + new Date().getTime() + '.js'),
+            out: path.resolve(htmlDir, new Date().getTime() + '.js'),
             wrap: {
               end: getLoaderScriptContent()
             }
@@ -168,13 +169,13 @@
           if ($ele.attr('callback')) {
             param.callback = $ele.attr('callback');
           }
-          cb(fs.readFileSync(info.out) + '', info.out + ', components=' + JSON.stringify(info.include) + '\n' + buildResponse.trim() + '\n----------------');
+          cb(loadFile(info.out), info.out + ', components=' + JSON.stringify(info.include) + '\n' + buildResponse.trim() + '\n----------------');
           fs.unlinkSync(info.out);
         }, function (err) {
           console.error(err);
         });
       } else {
-        cb(uglifyjs.minify(path.resolve(currloc + '/' + src)).code, src);
+        cb(uglifyjs.minify(path.resolve(htmlDir, src)).code, src);
       }
     } else {
       var content = uglifyjs.minify($ele.text(), {
@@ -200,15 +201,16 @@
       loadComponents = [],
       loadGkTags = [],
       currDir = html + '/../',
+      sepRex = /\\/g,
       baseUrl = absolute(param.baseUrl || '', currDir);
     _.each(param.components, function (c) {
       c = absolute(trimExt(c, 'html'), baseUrl);
-      loadComponents.push(path.relative(currDir, c));
+      loadComponents.push(path.relative(currDir, c).replace(sepRex, '/'));
       paths.push('@html!' + c);
     });
     _.each(param.gkTags, function (t) {
       t = absolute(trimExt(t, 'js'), baseUrl);
-      loadGkTags.push(path.relative(currDir, t));
+      loadGkTags.push(path.relative(currDir, t).replace(sepRex, '/'));
       paths.push(t);
     });
     return {
@@ -219,7 +221,7 @@
   }
 
   function getLoaderScriptContent() {
-    return fs.readFileSync(__dirname + '/' + gkLoaderDir + '/gk-loader' + runMode + '.js') + '';
+    return loadFile(path.resolve(__dirname, gkLoaderDir, 'gk-loader' + runMode + '.js'));
   }
 
   function overwriteMethod(ctx) {
@@ -230,11 +232,11 @@
   }
 
   bundlers.link = function (html, $ele, param, cb) {
-    var currloc = normalize(config.documentRoot + '/' + html + '/../'),
+    var htmlDir = path.resolve(config.documentRoot, html, '..'),
       href = $ele.attr('href');
-    cb(csso.justDoIt(fs.readFileSync(path.resolve(currloc + '/' + href)) + ''), href);
+    cb(csso.justDoIt(loadFile(path.resolve(htmlDir, href))), href);
   };
 
   module.exports.bundle = bundle;
 
-}(this));
+}(require, module));

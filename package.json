@@ -1,6 +1,7 @@
 {
   "name": "gk-minifier",
-  "version": "0.0.7",
+  "author": "EZoUI <ezoservice@icsc.com.tw>",
+  "version": "0.0.8",
   "dependencies": {
     "underscore": "*",
     "requirejs": "*",
@@ -9,6 +10,6 @@
     "glob": "*",
     "wrench": "*",
     "csso": "*",
-    "gk-loader": "*"
+    "gk-loader": "git+https://github.com/ezoapp/gk-loader.git#master"
   }
 }

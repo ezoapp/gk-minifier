@@ -2,6 +2,10 @@
   "name": "gk-minifier",
   "author": "EZoUI <ezoservice@icsc.com.tw>",
   "version": "0.0.8",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ezoapp/gk-minifier.git"
+  },
   "dependencies": {
     "underscore": "*",
     "requirejs": "*",

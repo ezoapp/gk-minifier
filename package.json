@@ -13,7 +13,7 @@
     "cheerio": "*",
     "glob": "*",
     "wrench": "*",
-    "csso": "*",
+    "csso": "1.8.1",
     "gk-loader": "git+https://github.com/ezoapp/gk-loader.git#master"
   }
 }
